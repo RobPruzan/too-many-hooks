@@ -86,13 +86,7 @@ const Redirect = ({
     console.log("dispatch promise");
 
     startTransition(() => {
-      let resolver: (value: any) => void;
-      let promise = new Promise((res) => {
-        resolver = res;
-      });
-      setTrigger(promise);
-      // @ts-expect-error
-      resolver("hi");
+      setTrigger(Promise.resolve());
     });
   };
 
