@@ -46,20 +46,27 @@ export class ErrorBoundary extends Component<
     return this.props.children;
   }
 }
-
-export default function Page() {
+export default function Entry() {
+  return (
+    // adding this suspense boundary fixes too many hooks problem
+    // <Suspense>
+    <Page />
+    // </Suspense>
+  );
+}
+function Page() {
   const [promise, setTrigger] = useState<Promise<any> | null>(null);
   const _ = promise ? use(promise) : promise;
   useMemo(() => {}, []);
   return (
-    <Fragment>
+    <>
       <Redirect setTrigger={setTrigger} />
       <ClientSuspense>
         <ErrorBoundary>
           <Bomb />
         </ErrorBoundary>
       </ClientSuspense>
-    </Fragment>
+    </>
   );
 }
 
@@ -84,9 +91,8 @@ const Redirect = ({
         resolver = res;
       });
       setTrigger(promise);
-      setTimeout(() => {
-        resolver("hi");
-      }, 100);
+      // @ts-expect-error
+      resolver("hi");
     });
   };
 

@@ -1,17 +1,18 @@
 {
-  "name": "too-many-hooks",
+  "name": "nextjs-app-router",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^15.4.0-canary.87",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "15.4.0-canary.84",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "@next/swc": "file:/Users/robby/next.js/tarballs/next-swc.tar"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -20,5 +21,13 @@
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "overrides": {
+      "next": "file:/Users/robby/next.js/tarballs/next.tar",
+      "@next/mdx": "file:/Users/robby/next.js/tarballs/next-mdx.tar",
+      "@next/env": "file:/Users/robby/next.js/tarballs/next-env.tar",
+      "@next/bundle-analyzer": "file:/Users/robby/next.js/tarballs/next-bundle-analyzer.tar"
+    }
   }
 }
