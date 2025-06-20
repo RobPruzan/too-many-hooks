@@ -3,6 +3,51 @@ import { Fragment, startTransition, use, useMemo } from "react";
 import { useEffect, useState } from "react";
 import { Suspense, Component } from "react";
 
+export default function Entry() {
+  return (
+    // adding this suspense boundary fixes too many hooks problem
+    // <Suspense>
+    <Page />
+    // </Suspense>
+  );
+}
+function Page() {
+  const [promise, setPromise] = useState<Promise<any> | null>(null);
+  const _ = promise ? use(promise) : promise;
+  useMemo(() => {}, []);
+  return (
+    <>
+      <Redirect setPromise={setPromise} />
+      <ClientSuspense>
+        <ErrorBoundary>
+          <Bomb />
+        </ErrorBoundary>
+      </ClientSuspense>
+    </>
+  );
+}
+
+const Redirect = ({
+  setPromise,
+}: {
+  setPromise: (promise: Promise<any>) => void;
+}) => {
+  const [state, setState] = useState(false);
+
+  useEffect(() => {
+    setState(true);
+    startTransition(() => {
+      setPromise(Promise.resolve());
+    });
+  }, [state]);
+
+  return null;
+};
+
+const Bomb = () => {
+  throw new Error("boom");
+};
+
 export const ClientSuspense = ({ children }: { children: React.ReactNode }) => {
   return <Suspense fallback={<div>loading</div>}>{children}</Suspense>;
 };
@@ -46,48 +91,3 @@ export class ErrorBoundary extends Component<
     return this.props.children;
   }
 }
-export default function Entry() {
-  return (
-    // adding this suspense boundary fixes too many hooks problem
-    // <Suspense>
-    <Page />
-    // </Suspense>
-  );
-}
-function Page() {
-  const [promise, setPromise] = useState<Promise<any> | null>(null);
-  const _ = promise ? use(promise) : promise;
-  useMemo(() => {}, []);
-  return (
-    <>
-      <Redirect setPromise={setPromise} />
-      <ClientSuspense>
-        <ErrorBoundary>
-          <Bomb />
-        </ErrorBoundary>
-      </ClientSuspense>
-    </>
-  );
-}
-
-const Bomb = () => {
-  throw new Error("boom");
-  return <div>hi</div>;
-};
-
-const Redirect = ({
-  setPromise,
-}: {
-  setPromise: (promise: Promise<any>) => void;
-}) => {
-  const [trigger, setTrigger] = useState(false);
-
-  useEffect(() => {
-    setTrigger((prev) => !prev);
-    startTransition(() => {
-      setPromise(Promise.resolve());
-    });
-  }, []);
-
-  return null;
-};
