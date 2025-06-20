@@ -55,12 +55,12 @@ export default function Entry() {
   );
 }
 function Page() {
-  const [promise, setTrigger] = useState<Promise<any> | null>(null);
+  const [promise, setPromise] = useState<Promise<any> | null>(null);
   const _ = promise ? use(promise) : promise;
   useMemo(() => {}, []);
   return (
     <>
-      <Redirect setTrigger={setTrigger} />
+      <Redirect setPromise={setPromise} />
       <ClientSuspense>
         <ErrorBoundary>
           <Bomb />
@@ -76,31 +76,18 @@ const Bomb = () => {
 };
 
 const Redirect = ({
-  setTrigger,
+  setPromise,
 }: {
-  setTrigger: (promise: Promise<any>) => void;
+  setPromise: (promise: Promise<any>) => void;
 }) => {
-  const [state, setState] = useState<string>("v1");
+  const [trigger, setTrigger] = useState(false);
 
-  const dispatchPromise = () => {
-    console.log("dispatch promise");
-
+  useEffect(() => {
+    setTrigger((prev) => !prev);
     startTransition(() => {
-      setTrigger(Promise.resolve());
+      setPromise(Promise.resolve());
     });
-  };
-
-  useEffect(() => {
-    setState("/versions/v2");
   }, []);
-
-  useEffect(() => {
-    // this works
-    // setTimeout(() => {
-    //   dispatchPromise();
-    // });
-    dispatchPromise();
-  }, [state]);
 
   return null;
 };
